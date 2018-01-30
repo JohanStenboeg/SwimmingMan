@@ -1,6 +1,10 @@
 Swimming Man
 A minigame i'm working on as a school Projekt. 
 
+
+OBS. NO COMMENTS YET
+(as im still figureing out what exactly is going on :P )
+
 Getting Started
 To run this you'll need Intellij. 
 
