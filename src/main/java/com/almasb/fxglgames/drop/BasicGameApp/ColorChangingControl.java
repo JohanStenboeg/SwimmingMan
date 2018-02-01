@@ -11,7 +11,7 @@ import javafx.util.Duration;
 public class ColorChangingControl extends Control {
     private Rectangle view;
     private LocalTimer timer;
-    private Duration interval = Duration.seconds(30);
+    private Duration interval = Duration.seconds(5);
 
     @Override
     public void onAdded(Entity entity){
@@ -20,6 +20,10 @@ public class ColorChangingControl extends Control {
     }
     @Override
     public void onUpdate(Entity entity, double tpf){
+       // if (timer.elapsed(interval){
+
+
+        /*
         if (timer.elapsed(interval)){
             Color nextViewColor = ((Color)view.getFill()).invert();
             Color stageColor = nextViewColor.invert();
@@ -29,6 +33,7 @@ public class ColorChangingControl extends Control {
 
             timer.capture();
         }
+        */
     }
 
 }

@@ -32,6 +32,11 @@
             <artifactId>fxgl</artifactId>
             <version>${fxgl.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.almasb</groupId>
+            <artifactId>Drop</artifactId>
+            <version>0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

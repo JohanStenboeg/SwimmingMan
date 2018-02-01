@@ -4,20 +4,18 @@ import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
+import com.almasb.fxgl.entity.control.KeepOnScreenControl;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import java.util.Map;
 import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.texture.Texture;
-import javafx.util.Duration;
 
-import static javafx.scene.input.KeyCode.SPACE;
 
 public class BasicGameApp extends GameApplication {
 
@@ -31,8 +29,9 @@ public class BasicGameApp extends GameApplication {
         settings.setTitle("SwimmingMan");
 
     }
+
     @Override
-    protected void initInput(){
+    protected void initInput() {
         getInput().addAction(new UserAction("Swim Up") {
             @Override
             protected void onActionBegin() {
@@ -63,16 +62,14 @@ public class BasicGameApp extends GameApplication {
     }
 
     @Override
-    protected void initGameVars(Map<String, Object> vars){
+    protected void initGameVars(Map<String, Object> vars) {
         vars.put("stageColor", Color.BLACK);
         vars.put("score", 0);
     }
 
 
-
-
     @Override
-    protected void initGame(){
+    protected void initGame() {
         initBackground();
         initPlayer();
 
@@ -82,17 +79,25 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-            getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.WALL) {
-                @Override
-                protected void onCollisionBegin(Entity a, Entity b) {
-                    requestNewGame = true;
-                }
-            });
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.TOPWALL) {
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                requestNewGame = true;
+            }
+        });
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOTTOMWALL) {
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b){
+                requestNewGame = true;
+            }
+        });
 
-        }
+
+    }
+
 
     @Override
-    protected void initUI(){
+    protected void initUI() {
         Text uiScore = getUIFactory().newText("", 48);
         uiScore.setTranslateX(getWidth() - 120);
         uiScore.setTranslateY(50);
@@ -105,49 +110,55 @@ public class BasicGameApp extends GameApplication {
     }
 
     @Override
-    protected void onUpdate(double tpf){
+    protected void onUpdate(double tpf) {
         getGameState().increment("score", 1);
     }
 
     @Override
-    protected void onPostUpdate(double tpf){
-        if(getGameState().getInt("score") == 300){
+    protected void onPostUpdate(double tpf) {
+        if (getGameState().getInt("score") == 30000) {
             showGameOver();
         }
-        if (requestNewGame){
-            requestNewGame = true;
+        if (requestNewGame) {
+            requestNewGame = false;
             startNewGame();
         }
     }
 
-    private void initBackground(){
+    private void initBackground() {
         Entity bg = Entities.builder()
-                .viewFromTextureWithBBox("BackgroundUnderwater.jpg")
+                .viewFromTexture("BackgroundUnderwater.jpg")
                 .type(EntityType.BACKGROUND)
+                /*
                 .viewFromNode(new Rectangle(getWidth(), getHeight(), Color.WHITE))
                 .with(new ColorChangingControl())
+                */
                 .buildAndAttach();
 
         bg.xProperty().bind(getGameScene().getViewport().xProperty());
         bg.yProperty().bind(getGameScene().getViewport().xProperty());
     }
-    private void initPlayer(){
+
+    private void initPlayer() {
 
         playerControl = new PlayerControl();
 
         Texture view = getAssetLoader().loadTexture("diver-1.gif");
 
         Entity player = Entities.builder()
-                .at(300, 300)
+                .at(200, 300)
                 .type(EntityType.PLAYER)
-                .bbox(new HitBox ("BODY", BoundingShape.box(300, 300)))
+                .bbox(new HitBox("BODY", BoundingShape.box(100, 50)))
                 .viewFromNode(view)
                 .with(new CollidableComponent(true))
+                .with(new KeepOnScreenControl(true, true))
                 .with(playerControl, new WallBuildingControl())
                 .buildAndAttach();
+        player.setScaleX(0.45);
+        player.setScaleY(0.45);
 
-       getGameScene().getViewport().setBounds(0,0, Integer.MAX_VALUE, getHeight());
-       getGameScene().getViewport().bindToEntity(player, getWidth()/1, getHeight()/1);
+        getGameScene().getViewport().setBounds(10, 10, Integer.MAX_VALUE, getHeight());
+        getGameScene().getViewport().bindToEntity(player, getWidth() / 10, getHeight() / 2);
     }
 
 
