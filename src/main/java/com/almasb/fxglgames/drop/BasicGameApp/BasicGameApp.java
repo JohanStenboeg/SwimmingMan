@@ -5,9 +5,14 @@ import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.component.CollidableComponent;
 import com.almasb.fxgl.entity.control.KeepOnScreenControl;
+import com.almasb.fxgl.entity.view.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.geometry.Orientation;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import java.util.Map;
@@ -15,6 +20,7 @@ import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.HitBox;
 import com.almasb.fxgl.texture.Texture;
+import javafx.stage.Stage;
 
 
 public class BasicGameApp extends GameApplication {
@@ -70,10 +76,12 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void initGame() {
-        initBackground();
+        getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("SeamlessUnderwaterBackground.jpg", 800, 600), Orientation.HORIZONTAL));
+        //initBackground();
         initPlayer();
 
     }
+
 
     private boolean requestNewGame = false;
 
@@ -87,7 +95,7 @@ public class BasicGameApp extends GameApplication {
         });
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOTTOMWALL) {
             @Override
-            protected void onCollisionBegin(Entity a, Entity b){
+            protected void onCollisionBegin(Entity a, Entity b) {
                 requestNewGame = true;
             }
         });
@@ -125,19 +133,21 @@ public class BasicGameApp extends GameApplication {
         }
     }
 
-    private void initBackground() {
+    //BackgroundImage myBI = new BackgroundImage(new Image("BackgroundUnderwater.jpg", 800, 600, false, true),
+            //BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
+
+
+    /*private void initBackground() {
         Entity bg = Entities.builder()
                 .viewFromTexture("BackgroundUnderwater.jpg")
                 .type(EntityType.BACKGROUND)
-                /*
-                .viewFromNode(new Rectangle(getWidth(), getHeight(), Color.WHITE))
-                .with(new ColorChangingControl())
-                */
                 .buildAndAttach();
 
         bg.xProperty().bind(getGameScene().getViewport().xProperty());
         bg.yProperty().bind(getGameScene().getViewport().xProperty());
     }
+    */
+
 
     private void initPlayer() {
 
@@ -170,5 +180,14 @@ public class BasicGameApp extends GameApplication {
     public static void main(String[] args) {
         launch(args);
     }
-}
 
+    /*@Override
+    public void start(Stage primaryStage) {
+        StackPane root = new StackPane();
+        root.setId("pane");
+        Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().addAll(this.getClass().getResource("BackGround.css").toExternalForm());
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }*/
+}
