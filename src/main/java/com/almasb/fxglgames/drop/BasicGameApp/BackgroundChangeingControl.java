@@ -8,14 +8,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public class ColorChangingControl extends Control {
-    private Rectangle view;
+/*public class BackgroundChangeingControl extends Control {
     private LocalTimer timer;
     private Duration interval = Duration.seconds(5);
 
     @Override
     public void onAdded(Entity entity){
-        view = (Rectangle) entity.getView().getNodes().get(0);
         timer = FXGL.newLocalTimer();
     }
     @Override
@@ -23,17 +21,20 @@ public class ColorChangingControl extends Control {
        // if (timer.elapsed(interval){
 
 
-        /*
+
         if (timer.elapsed(interval)){
-            Color nextViewColor = ((Color)view.getFill()).invert();
+
+            /*Color nextViewColor = ((Color)view.getFill()).invert();
             Color stageColor = nextViewColor.invert();
 
             view.setFill(nextViewColor);
             FXGL.getApp().getGameState().setValue("stageColor", stageColor);
 
+
             timer.capture();
         }
-        */
+
     }
 
 }
+*/

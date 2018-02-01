@@ -9,23 +9,22 @@ import com.almasb.fxgl.entity.view.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
 import javafx.geometry.Orientation;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import java.io.File;
 import java.util.Map;
-import com.almasb.fxgl.physics.BoundingShape;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.physics.HitBox;
-import com.almasb.fxgl.texture.Texture;
-import javafx.stage.Stage;
-
-
 public class BasicGameApp extends GameApplication {
 
     private PlayerControl playerControl;
+
+    public void start() {
+        start();
+    }
+
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -33,47 +32,32 @@ public class BasicGameApp extends GameApplication {
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("SwimmingMan");
+        settings.setMenuEnabled(false);
 
     }
 
     @Override
     protected void initInput() {
-        getInput().addAction(new UserAction("Swim Up") {
-            @Override
-            protected void onActionBegin() {
-                playerControl.swimUp();
-            }
-        }, KeyCode.W);
+        String urlString = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\Music\\ActualBackGroundMusicFile.mp3").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
+        MediaPlayer player = new MediaPlayer(new Media(urlString));//Laver filen om til en Mediaplayer
+        player.play();//Tillader den at afspille
+        player.setAutoPlay(true);//Afspiller den på startup.
+        player.setCycleCount(1111110);//Hvor mange gange sangen skal køre
+        String urlString2 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\textures\\DiverIcon.ico").toURI().toString();//Henter icon filensplacering og laver den om til et "uri".
 
-        getInput().addAction(new UserAction("Swim Down") {
+
+        getInput().addAction(new UserAction("Swim Up") {
             @Override
             protected void onActionBegin() {
                 playerControl.swimDown();
             }
-        }, KeyCode.S);
-
-        getInput().addAction(new UserAction("Swim Forward") {
-            @Override
-            protected void onActionBegin() {
-                playerControl.swimForward();
-            }
-        }, KeyCode.D);
-
-        getInput().addAction(new UserAction("Swim Backward") {
-            @Override
-            protected void onActionBegin() {
-                playerControl.swimBackward();
-            }
-        }, KeyCode.A);
+        }, KeyCode.SPACE);
     }
-
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("stageColor", Color.BLACK);
         vars.put("score", 0);
     }
-
-
     @Override
     protected void initGame() {
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("SeamlessUnderwaterBackground.jpg", 800, 600), Orientation.HORIZONTAL));
@@ -91,18 +75,32 @@ public class BasicGameApp extends GameApplication {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 requestNewGame = true;
+                String urlString1 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\Cartoon Metal Hit Sound Effects (mp3cut.net).wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
+                MediaPlayer player1 = new MediaPlayer(new Media(urlString1));//Laver filen om til en Mediaplayer
+                player1.play();//Tillader den at afspille
             }
         });
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOTTOMWALL) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
                 requestNewGame = true;
+                String urlString10 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\ManEatingPlant.wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
+                MediaPlayer player10 = new MediaPlayer(new Media(urlString10));//Laver filen om til en Mediaplayer
+                player10.play();//Tillader den at afspille
+            }
+        });
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.MIDDLEOBSTACLE) {
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                requestNewGame = true;
+                String urlString3 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\Cartoon Bite Sound Effects (mp3cut.net).wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
+                MediaPlayer player3 = new MediaPlayer(new Media(urlString3));//Laver filen om til en Mediaplayer
+                player3.play();//Tillader den at afspille
             }
         });
 
 
     }
-
 
     @Override
     protected void initUI() {
@@ -119,7 +117,7 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void onUpdate(double tpf) {
-        getGameState().increment("score", 1);
+        getGameState().increment("score", +1);
     }
 
     @Override
@@ -133,42 +131,20 @@ public class BasicGameApp extends GameApplication {
         }
     }
 
-    //BackgroundImage myBI = new BackgroundImage(new Image("BackgroundUnderwater.jpg", 800, 600, false, true),
-            //BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT);
-
-
-    /*private void initBackground() {
-        Entity bg = Entities.builder()
-                .viewFromTexture("BackgroundUnderwater.jpg")
-                .type(EntityType.BACKGROUND)
-                .buildAndAttach();
-
-        bg.xProperty().bind(getGameScene().getViewport().xProperty());
-        bg.yProperty().bind(getGameScene().getViewport().xProperty());
-    }
-    */
-
 
     private void initPlayer() {
 
         playerControl = new PlayerControl();
-
-        Texture view = getAssetLoader().loadTexture("diver-1.gif");
-
         Entity player = Entities.builder()
                 .at(200, 300)
                 .type(EntityType.PLAYER)
-                .bbox(new HitBox("BODY", BoundingShape.box(100, 50)))
-                .viewFromNode(view)
+                .viewFromTextureWithBBox("ResizedDiverGif.gif")
                 .with(new CollidableComponent(true))
                 .with(new KeepOnScreenControl(true, true))
-                .with(playerControl, new WallBuildingControl())
+                .with(playerControl, new ObstacleBuildingControl())
                 .buildAndAttach();
-        player.setScaleX(0.45);
-        player.setScaleY(0.45);
-
-        getGameScene().getViewport().setBounds(10, 10, Integer.MAX_VALUE, getHeight());
-        getGameScene().getViewport().bindToEntity(player, getWidth() / 10, getHeight() / 2);
+        getGameScene().getViewport().setBounds(0, 0, Integer.MAX_VALUE, getHeight());
+        getGameScene().getViewport().bindToEntity(player, getWidth() / 10, getHeight() / 100);
     }
 
 
@@ -176,18 +152,7 @@ public class BasicGameApp extends GameApplication {
         getDisplay().showMessageBox("Game Over. Thank you for playing!", this::exit);
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
-
-    /*@Override
-    public void start(Stage primaryStage) {
-        StackPane root = new StackPane();
-        root.setId("pane");
-        Scene scene = new Scene(root, 800, 600);
-        scene.getStylesheets().addAll(this.getClass().getResource("BackGround.css").toExternalForm());
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }*/
 }
