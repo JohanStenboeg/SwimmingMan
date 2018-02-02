@@ -1,5 +1,6 @@
 package com.almasb.fxglgames.drop.BasicGameApp;
 
+import com.almasb.fxgl.animation.Interpolators;
 import com.almasb.fxgl.app.GameApplication;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.Entity;
@@ -8,31 +9,33 @@ import com.almasb.fxgl.entity.control.KeepOnScreenControl;
 import com.almasb.fxgl.entity.view.ScrollingBackgroundView;
 import com.almasb.fxgl.input.UserAction;
 import com.almasb.fxgl.settings.GameSettings;
+import javafx.animation.Animation;
 import javafx.geometry.Orientation;
+import javafx.geometry.Point2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
 import java.io.File;
 import java.util.Map;
+
 import com.almasb.fxgl.physics.CollisionHandler;
+import javafx.util.Duration;
+
 public class BasicGameApp extends GameApplication {
 
     private PlayerControl playerControl;
 
-    public void start() {
-        start();
-    }
-
-
     @Override
     protected void initSettings(GameSettings settings) {
-        settings.setVersion(String.valueOf(1.0));
+        settings.setVersion(String.valueOf(2.0));
         settings.setWidth(800);
         settings.setHeight(600);
         settings.setTitle("SwimmingMan");
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
 
     }
 
@@ -53,19 +56,21 @@ public class BasicGameApp extends GameApplication {
             }
         }, KeyCode.SPACE);
     }
+
     @Override
     protected void initGameVars(Map<String, Object> vars) {
         vars.put("stageColor", Color.BLACK);
         vars.put("score", 0);
+        vars.put("StageColor", Color.BLACK);
+        vars.put("coins", 0);
     }
+
     @Override
     protected void initGame() {
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("SeamlessUnderwaterBackground.jpg", 800, 600), Orientation.HORIZONTAL));
-        //initBackground();
         initPlayer();
 
     }
-
 
     private boolean requestNewGame = false;
 
@@ -74,44 +79,79 @@ public class BasicGameApp extends GameApplication {
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.TOPWALL) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
-                requestNewGame = true;
                 String urlString1 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\Cartoon Metal Hit Sound Effects (mp3cut.net).wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
                 MediaPlayer player1 = new MediaPlayer(new Media(urlString1));//Laver filen om til en Mediaplayer
                 player1.play();//Tillader den at afspille
+                requestNewGame = true;
             }
         });
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.BOTTOMWALL) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
-                requestNewGame = true;
+
                 String urlString10 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\ManEatingPlant.wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
                 MediaPlayer player10 = new MediaPlayer(new Media(urlString10));//Laver filen om til en Mediaplayer
                 player10.play();//Tillader den at afspille
+                requestNewGame = true;
             }
         });
         getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.MIDDLEOBSTACLE) {
             @Override
             protected void onCollisionBegin(Entity a, Entity b) {
-                requestNewGame = true;
+
                 String urlString3 = new File("C:\\Users\\johan\\IdeaProjects\\SimpleGameApp\\src\\main\\resources\\assets\\SoundEffects\\Cartoon Bite Sound Effects (mp3cut.net).wav").toURI().toString();//Finder music filen med Relativ path(så alle kan bruge den).
                 MediaPlayer player3 = new MediaPlayer(new Media(urlString3));//Laver filen om til en Mediaplayer
                 player3.play();//Tillader den at afspille
+                requestNewGame = true;
+            }
+        });
+        getPhysicsWorld().addCollisionHandler(new CollisionHandler(EntityType.PLAYER, EntityType.COIN) {
+            @Override
+            protected void onCollisionBegin(Entity a, Entity b) {
+                getGameState().increment("coins", +1);
+                requestNewGame = false;
+
             }
         });
 
 
     }
 
+    private com.almasb.fxgl.animation.Animation<?> animation;
+
     @Override
     protected void initUI() {
-        Text uiScore = getUIFactory().newText("", 48);
+        Text text = new Text("Reach 5000 points or collect 20 coins to win");
+        text.setTranslateX(50);
+        text.setTranslateY(200);
+        text.setFont(Font.font(45));
+
+        getGameScene().addUINode(text);
+
+        animation = getUIFactory().translate(text, new Point2D(100, 500), new Duration(1000));
+        animation.getAnimatedValue().setInterpolator(Interpolators.BOUNCE.EASE_IN());
+        animation.setCycleCount(1);
+        animation.setAutoReverse(true);
+        animation.startInPlayState();
+
+        animation = getUIFactory().scale(text, new Point2D(0,0), new Point2D(1, 1), new Duration(1000));
+        animation.getAnimatedValue().setInterpolator(Interpolators.BOUNCE.EASE_OUT());
+        animation.startInPlayState();
+
+
+        Text uiScore = getUIFactory().newText("Score: ", 48);
         uiScore.setTranslateX(getWidth() - 120);
         uiScore.setTranslateY(50);
         uiScore.fillProperty().bind(getGameState().objectProperty("stageColor"));
         uiScore.textProperty().bind(getGameState().intProperty("score").asString());
-
-
         getGameScene().addUINode(uiScore);
+
+        Text uicoins = getUIFactory().newText("Coins: ", 48);
+        uicoins.setTranslateX(getWidth() - 200);
+        uicoins.setTranslateY(50);
+        uicoins.fillProperty().bind(getGameState().objectProperty("stageColor"));
+        uicoins.textProperty().bind(getGameState().intProperty("coins").asString());
+        getGameScene().addUINode(uicoins);
 
     }
 
@@ -122,8 +162,13 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void onPostUpdate(double tpf) {
-        if (getGameState().getInt("score") == 30000) {
-            showGameOver();
+        if (getGameState().getInt("score") == 3000) {
+            showGameWon();
+            startNewGame();
+        }
+        if (getGameState().getInt("coins") == 15) {
+            showGameWon();
+            startNewGame();
         }
         if (requestNewGame) {
             requestNewGame = false;
@@ -147,9 +192,9 @@ public class BasicGameApp extends GameApplication {
         getGameScene().getViewport().bindToEntity(player, getWidth() / 10, getHeight() / 100);
     }
 
+    private void showGameWon() {
+        getDisplay().showMessageBox("Game Won. Congratulations and thank you for playing!", this::exit);
 
-    private void showGameOver() {
-        getDisplay().showMessageBox("Game Over. Thank you for playing!", this::exit);
     }
 
     public static void main(String[] args) {
