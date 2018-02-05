@@ -5,7 +5,6 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.app.FXGL;
 import com.almasb.fxgl.entity.Entities;
 import com.almasb.fxgl.entity.component.CollidableComponent;
-
 import java.util.Random;
 
 public class ObstacleBuildingControl extends Control {
@@ -14,6 +13,7 @@ public class ObstacleBuildingControl extends Control {
     private double coralWall = 500;
     private double sharkWall = 500;
     private double coinwall = 500;
+    private double squidWall = 500;
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
@@ -24,6 +24,9 @@ public class ObstacleBuildingControl extends Control {
             buildWall();
         }
         if (sharkWall - entity.getX() < FXGL.getApp().getWidth()) {
+            buildWall();
+        }
+        if (squidWall - entity.getX() < FXGL.getApp().getWidth()) {
             buildWall();
         }
         if (coinwall - entity.getX() < FXGL.getApp().getWidth()) {
@@ -49,9 +52,9 @@ public class ObstacleBuildingControl extends Control {
         for (int i = 1; i <= 1; i++) {
             double topHeight = Math.random() * (height - distance);
             Entities.builder()
-                    .at(coralWall + i * 0, 450) //(first x = how fast they spawn, 2nd x is how high/low they spawn)
-                    .type(EntityType.TOPWALL) //Specifies which wall/obstacle
-                    .viewFromTextureWithBBox("coral150px.png") //Specifics what image
+                    .at(coralWall + i * 0, 455) //(first x = how fast they spawn, 2nd x is how high/low they spawn)
+                    .type(EntityType.BOTTOMWALL) //Specifies which wall/obstacle
+                    .viewFromTextureWithBBox("NewUnderwaterPlant.png") //Specifics what image
                     .with(new CollidableComponent(true))
                     .buildAndAttach();
         }
@@ -59,9 +62,19 @@ public class ObstacleBuildingControl extends Control {
         for (int k = 1; k <= 1; k++) {
             double topHeight = Math.random() * (height - distance);
             Entities.builder()
-                    .at(sharkWall + k * 250, 200 + spawnResult())
+                    .at(sharkWall + k * 250, 50 + spawnResult())
                     .type(EntityType.MIDDLEOBSTACLE)
                     .viewFromTextureWithBBox("Shark75px.png")
+                    .with(new CollidableComponent(true))
+                    .buildAndAttach();
+        }
+        //SQUID CODE STARTS
+        for (int k = 1; k <= 1; k++) {
+            double topHeight = Math.random() * (height - distance);
+            Entities.builder()
+                    .at(squidWall + k * 500, 200 + spawnResult())
+                    .type(EntityType.MIDDLEOBSTACLE2)
+                    .viewFromTextureWithBBox("SquidPurpel100x.png")
                     .with(new CollidableComponent(true))
                     .buildAndAttach();
         }
@@ -81,6 +94,7 @@ public class ObstacleBuildingControl extends Control {
         coralWall += 10 * (25 + spawnOccurencyCoral());
         sharkWall += 10 * (40 + spawnOccurencyCoral());
         coinwall += 10 * 100;
+        squidWall += 10 * (100 + spawnOccurencyCoral());
     }
 
 

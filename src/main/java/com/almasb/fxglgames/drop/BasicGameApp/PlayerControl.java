@@ -9,6 +9,7 @@ public class PlayerControl extends Control {
 
     @Override
     public void onUpdate(Entity entity, double tpf) {
+
         acceleration.x += tpf * 0.1;
         acceleration.y += tpf * -10;
 
