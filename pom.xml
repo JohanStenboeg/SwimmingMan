@@ -64,7 +64,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.almasb.fxglgames.drop.DropApp</mainClass>
+                                    <mainClass>C:\Users\johan\IdeaProjects\SimpleGameApp\src\main\java\com\almasb\fxglgames\drop\BasicGameApp</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

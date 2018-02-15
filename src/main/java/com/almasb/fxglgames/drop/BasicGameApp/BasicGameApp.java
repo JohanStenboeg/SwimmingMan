@@ -15,9 +15,13 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import java.awt.*;
 import java.io.File;
 import java.util.Map;
 import com.almasb.fxgl.physics.CollisionHandler;
+
+import javax.imageio.ImageIO;
 
 public class BasicGameApp extends GameApplication {
 
@@ -31,8 +35,9 @@ public class BasicGameApp extends GameApplication {
         settings.setTitle("SwimmingMan"); //Naming the window in left top corner.
         settings.setMenuEnabled(false); //Enableing or disableing the menu.
 
-
     }
+
+
 
     @Override
     protected void initInput() { //Method for inputs to the game
@@ -65,6 +70,7 @@ public class BasicGameApp extends GameApplication {
         getGameScene().addGameView(new ScrollingBackgroundView(getAssetLoader().loadTexture("SeamlessUnderwaterBackgroundModified.jpg", 800, 600), Orientation.HORIZONTAL)); //adding a background and loops it.
         initPlayer(); //Adds the player to the game.
     }
+
     private boolean requestNewGame = false; //If this is called again, it will start a new game. Used later.
 
     @Override
@@ -168,11 +174,11 @@ public class BasicGameApp extends GameApplication {
 
     @Override
     protected void onPostUpdate(double tpf) { //After the game updated, it checks for the following.
-        if (getGameState().getInt("score") == 10000) { //Is the score == 10000?
+        if (getGameState().getInt("score") == 5000) { //Is the score == 5000?
             showGameWon(); //If yes show that the game is won and start a new game.
             startNewGame();
         }
-        if (getGameState().getInt("coins") == 35) { //Is the ammount of coins collected == 35?
+        if (getGameState().getInt("coins") == 20) { //Is the ammount of coins collected == 20?
             showGameWon(); //If yes show game won
             startNewGame(); //Start a new game
         }
@@ -199,9 +205,7 @@ public class BasicGameApp extends GameApplication {
 
     private void showGameWon() { //Message showing when the game is won.
         getDisplay().showMessageBox("Game Won. Congratulations and thank you for playing!", this::exit);
-
     }
-
     public static void main(String[] args) { //The game launches, this is the psvm.
         launch(args);
     }
