@@ -1,40 +1,20 @@
 Swimming Man
 A minigame i'm working on as a school Projekt. 
-
-
-OBS. NO COMMENTS YET
-(as im still figureing out what exactly is going on :P )
+The goal atm is to either reach 5000 points or 20 coins. 
+Coins spawn at random in random ammount and points are gathered as the game 
 
 Getting Started
 To run this you'll need Intellij. 
 
 Prerequisites
-Simply download everything and run. 
-
-Give examples
-
-
-
-
-
-Running the tests
-Currently no tests to run
-
-Break down into end to end tests
-
-
-
-Deployment
-Add additional notes about how to deploy this on a live system
+Simply download everything and run. You need to change the asset filepaths tho, as they link to my folders atm. 
 
 Built With
-
 Maven - Dependency Management
 Contributing
 
-
 Versioning
-
+All changes and different versions are on github free for anyone to watch. 
 
 Authors
 Johan Stenbøg
